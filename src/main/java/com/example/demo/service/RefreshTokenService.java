@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.RefreshToken;
+import com.example.demo.entity.User;
 import com.example.demo.repository.RefreshTokenRepository;
 
 @Service
