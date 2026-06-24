@@ -9,13 +9,14 @@ import com.example.demo.entity.RefreshToken;
 import com.example.demo.entity.User;
 import com.example.demo.repository.RefreshTokenRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class RefreshTokenService {
 
     private final RefreshTokenRepository repo;
+
+    public RefreshTokenService(RefreshTokenRepository repo) {
+        this.repo = repo;
+    }
 
     public RefreshToken create(User user, long expiryMs) {
         RefreshToken rt = new RefreshToken();
