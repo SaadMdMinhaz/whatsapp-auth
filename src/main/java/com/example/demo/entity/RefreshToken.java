@@ -6,7 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class RefreshToken {
@@ -19,7 +19,7 @@ public class RefreshToken {
 
     private Date expiryDate;
 
-    @OneToOne
+    @ManyToOne
     private User user;
 
     public Long getId() { return id; }

@@ -5,10 +5,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -23,9 +27,12 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateToken(String email) {
+    public String generateToken(String email, Collection<? extends GrantedAuthority> authorities) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("roles", authorities.stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessExp))
                 .signWith(getSigningKey())
@@ -36,8 +43,24 @@ public class JwtService {
         return getClaims(token).getSubject();
     }
 
+    public List<String> extractRoles(String token) {
+        return getClaims(token).get("roles", List.class);
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public boolean isTokenValid(String token, String email) {
-        return extractEmail(token).equals(email) && !isTokenExpired(token);
+        try {
+            return extractEmail(token).equals(email) && !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean isTokenExpired(String token) {
